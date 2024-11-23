@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-module.exports.login = async (req,res) =>{
+module.exports.login = async (req,res) =>{ //req:request recibe la petición del cliente, res:response envía la respuesta al cliente
     const {username,password} = req.body;
 
     try {
