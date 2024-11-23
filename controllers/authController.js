@@ -1,6 +1,6 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
-
+const jwt = require('jsonwebtoken');
 
 module.exports.login = async (req,res) =>{
     const {username,password} = req.body;
@@ -8,11 +8,12 @@ module.exports.login = async (req,res) =>{
     try {
         const results = await User.findByUsername(username);
         if(results.length>0){
-            const user = results[0];
+            const user = results[0]; // id: 1, username: 'admin', password: 'admin'
             const isMatch = await bcrypt.compare(password,user.password);   
       
             if(isMatch){
-                return res.status(200).json({message: "Usuario autenticado con éxito"})
+                const token = jwt.sign({userId:user.id},process.env.JWT_SECRET,{expiresIn:'365d'});
+                return res.status(200).json({message: "Usuario autenticado con éxito",token});
             }
         }else{
             return res.status(401).json({message: "Usuario o contraseña incorrecta"})
