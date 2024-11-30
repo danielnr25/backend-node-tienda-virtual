@@ -6,5 +6,13 @@ const database = mysql.createPool({
     password:process.env.DB_PASSWORD,
     database:process.env.DB_DATABASE
 });
-
+// verify connection es correcta
+// database.getConnection()
+//     .then(connection => {
+//         console.log("Conexión a la base de datos exitosa");
+//         connection.release();
+//     })
+//     .catch(error => {
+//         console.error("Error en la conexión a la base de datos:",error);
+//     });
 module.exports = database;
