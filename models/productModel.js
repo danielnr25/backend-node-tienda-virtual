@@ -3,7 +3,7 @@ const db = require('../config/db');
 const Product = {
     getAll: async () => {
         try {
-            const [results] = await db.query("SELECT pr.nombre,pr.id,pr.precio,pr.descripcion,pr.imagen,cp.nombre as categorianombre FROM `productos` pr LEFT JOIN categorias_productos cp ON pr.categoria_id = cp.id WHERE pr.deleted_at IS NULL"); // Traemos todos los productos donde deleted_at es NULL
+            const [results] = await db.query("SELECT pr.nombre,pr.id,pr.precio,pr.descripcion,pr.imagen,cp.nombre as categorianombre,pr.categoria_id FROM `productos` pr LEFT JOIN categorias_productos cp ON pr.categoria_id = cp.id WHERE pr.deleted_at IS NULL"); // Traemos todos los productos donde deleted_at es NULL
             return results;
         } catch (error) {
             throw error; // Si hay un error lo lanzamos
@@ -11,7 +11,7 @@ const Product = {
     },
     findById: async (id) => {
         try {
-            const [results] = await db.query("SELECT pr.nombre,pr.id,pr.precio,pr.descripcion,pr.imagen,cp.nombre as categorianombre FROM `productos` pr LEFT JOIN categorias_productos cp ON pr.categoria_id = cp.id WHERE pr.id = ? AND pr.deleted_at IS NULL", [id]); // Traemos el producto por su ID
+            const [results] = await db.query("SELECT pr.nombre,pr.id,pr.precio,pr.descripcion,pr.imagen,cp.nombre as categorianombre,pr.categoria_id FROM `productos` pr LEFT JOIN categorias_productos cp ON pr.categoria_id = cp.id WHERE pr.id = ? AND pr.deleted_at IS NULL", [id]); // Traemos el producto por su ID
             return results;
         } catch (error) {
             throw error; // Si hay un error lo lanzamos
