@@ -61,8 +61,21 @@ const CategoryController = {
         } catch (error) {
             res.status(500).json({ message: 'Error al eliminar la categoría', error }); // Manejo de errores
         }
+    },
+    searchCategory: async (req,res) =>{
+        console.log(req.body)
+        const {name} = req.query;
+        try {
+            const results = await Category.search(name)
+            console.log(results)
+            if(results.length===0){
+                return res.status(404).json({ message: 'No se encontraron resultados' });
+            }
+            res.status(200).json(results)
+        } catch (error) {
+            res.status(500).json({ message: 'Error al buscar la categoría', error }); // Manejo de errores
+        }
     }
-
 }
 
 

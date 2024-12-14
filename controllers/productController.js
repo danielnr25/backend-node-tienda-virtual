@@ -4,7 +4,14 @@ const ProductController = {
     getAllProducts: async (req, res) => {
         try {
             const products = await Product.getAll(); // Llamamos al modelo para obtener todos los productos
-            res.status(200).json(products); // Respondemos con los productos en formato JSON
+
+            const listProducts = products.map((product)=>({
+                ...product,
+                imagen: `http://localhost:3000${product.imagen}`
+            }))
+            
+
+            res.status(200).json(listProducts); // Respondemos con los productos en formato JSON
         } catch (error) {
             res.status(500).json({ message: 'Error al obtener los productos', error }); // Manejo de errores
         }

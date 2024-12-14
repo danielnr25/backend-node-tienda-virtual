@@ -2,6 +2,9 @@ const express = require('express');
 const CategoryController = require('../controllers/categoryController');
 const router = express.Router();
 
+// realizar la busqueda de categorias
+router.get('/search',CategoryController.searchCategory)
+
 //obtener todas las categorias
 router.get('/',CategoryController.getAllCategories);
 
