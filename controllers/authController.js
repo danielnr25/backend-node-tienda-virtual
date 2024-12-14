@@ -12,7 +12,7 @@ module.exports.login = async (req,res) =>{ //req:request recibe la petición del
             const isMatch = await bcrypt.compare(password,user.password);   
       
             if(isMatch){
-                const token = jwt.sign({userId:user.id},process.env.JWT_SECRET,{expiresIn:'24h'});
+                const token = jwt.sign({userId:user.id,role:user.tipo_usuario_id},process.env.JWT_SECRET,{expiresIn:'24h'});
                 return res.status(200).json({message: "Usuario autenticado con éxito",token});
             }
         }else{
