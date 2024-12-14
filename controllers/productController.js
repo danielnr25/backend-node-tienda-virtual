@@ -24,6 +24,7 @@ const ProductController = {
     },
     // Crear un nuevo producto
     createProduct: async (req, res) => {
+        console.log(req.body);
         const { name, description, price, category_id } = req.body; // Obtenemos los datos del cuerpo de la solicitud
         const image_url = req.file ? `/uploads/${req.file.filename}` : ''; // Obtenemos la URL de la imagen
 

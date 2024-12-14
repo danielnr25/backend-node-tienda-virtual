@@ -21,7 +21,7 @@ const Product = {
     create: async (name, description, price, category_id, image_url) => {
         try {
             const [results] = await db.query(
-                "INSERT INTO productos (nombre, precio, descripcion,imagen, category_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())",
+                "INSERT INTO productos (nombre,descripcion,precio,categoria_id,imagen, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())",
                 [name, description, price, category_id, image_url] // Se almacena la URL de la imagen
             );
             return results; // Retorna los resultados de la inserción
@@ -33,7 +33,7 @@ const Product = {
     update: async (id, name, description, price, category_id, image_url) => {
         try {
             const [results] = await db.query(
-                "UPDATE productos SET nombre = ?, precio = ?, descripcion = ?, image = ?,category_id = ?, updated_at = NOW() WHERE id = ?",
+                "UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ?,imagen = ?, updated_at = NOW() WHERE id = ?",
                 [name, description, price, category_id, image_url, id]
             );
             return results; // Retorna los resultados de la actualización
