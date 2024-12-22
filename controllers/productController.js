@@ -7,7 +7,7 @@ const ProductController = {
 
             const listProducts = products.map((product)=>({
                 ...product,
-                imagen: `http://localhost:3000${product.imagen}`
+                imagen: process.env.HOST + '/uploads/' + product.imagen
             }))
             
 
@@ -18,29 +18,32 @@ const ProductController = {
     },
      // Obtener un producto por su ID
      getProductById: async (req, res) => {
-        const { id } = req.params; // Obtenemos el ID de los parámetros de la ruta
+        const { id } = req.params;
         try {
-            const product = await Product.findById(id); // Llamamos al modelo para obtener el producto por ID
+            const product = await Product.findById(id);
             if (product.length === 0) {
-                return res.status(404).json({ message: 'Producto no encontrado' }); // Si no se encuentra, respondemos con 404
+                return res.status(404).json({ message: 'Producto no encontrado' });
             }
-            res.status(200).json(product[0]); // Respondemos con el producto encontrado
+            const updatedProduct = {
+                ...product[0],
+                imagen: process.env.HOST + '/uploads/' + product[0].imagen
+            };
+            res.status(200).json(updatedProduct);
         } catch (error) {
-            res.status(500).json({ message: 'Error al obtener el producto', error }); // Manejo de errores
+            res.status(500).json({ message: 'Error al obtener el producto', error });
         }
     },
     // Crear un nuevo producto
     createProduct: async (req, res) => {
-        console.log(req.body);
-        const { name, description, price, category_id } = req.body; // Obtenemos los datos del cuerpo de la solicitud
-        const image_url = req.file ? `/uploads/${req.file.filename}` : ''; // Obtenemos la URL de la imagen
+        const { name, description, price, category_id, stock } = req.body; // Obtenemos los datos del cuerpo de la solicitud
+        const image_url = req.file ? req.file.filename : '';  // Obtenemos la URL de la imagen
 
-        if (!name || !description || !price || !category_id) {
-            return res.status(400).json({ message: 'Nombre, descripción, precio y categoría son obligatorios' }); // Validación de datos
+        if (!name || !description || !price || !category_id || !stock) {
+            return res.status(400).json({ message: 'Nombre, descripción, precio, stock y categoría son obligatorios' }); // Validación de datos
         }
 
         try {
-            const newProduct = await Product.create(name, description, price, category_id, image_url); // Llamamos al modelo para crear el producto
+            const newProduct = await Product.create(name, description, price, category_id, image_url,stock); // Llamamos al modelo para crear el producto
             res.status(201).json({ message: 'Producto creado exitosamente', newProduct }); // Respondemos con éxito
         } catch (error) {
             res.status(500).json({ message: 'Error al crear el producto', error }); // Manejo de errores
@@ -50,21 +53,28 @@ const ProductController = {
     // Actualizar un producto
     updateProduct: async (req, res) => {
         const { id } = req.params; // Obtenemos el ID de la categoría de los parámetros de la ruta
-        const { name, description, price, category_id } = req.body; // Obtenemos los datos del cuerpo de la solicitud
-        const image_url = req.file ? `/uploads/${req.file.filename}` : ''; // Obtenemos la URL de la imagen
+        const { name, description, price, category_id, stock} = req.body; // Obtenemos los datos del cuerpo de la solicitud
+        const image_url = req.file ? req.file.filename : null;  // Obtenemos la URL de la imagen
 
-        if (!name || !description || !price || !category_id) {
+        if (!name || !description || !price || !category_id || !stock) {
             return res.status(400).json({ message: 'Nombre, descripción, precio y categoría son obligatorios' }); // Validación de datos
         }
 
-        // const productExiste = await Product.findById(id)
-        // const nomprod = productExiste.nombre
-        // if(nomprod === name){
-        //     return res.status(400).json({ message: 'El nombre ya existe, registrelo con otro nombre' }); // Validación de datos
-        // }
-
         try {
-            const updatedProduct = await Product.update(id, name, description, price, category_id, image_url); // Llamamos al modelo para actualizar el producto
+
+            const currentProduct = await Product.findById(id);
+            let saveImageUrl = currentProduct[0].imagen; // verificamos si existe una imagen antes de actualizar
+            if(!currentProduct){
+                return res.status(404).json({ message: 'Producto no encontrado' });
+            }
+            
+            if(image_url !=null){ // verifica si en la actualización de cualquier campo se ha subido una nueva imagen
+                saveImageUrl = image_url;
+            }else{
+                saveImageUrl = currentProduct[0].imagen;
+            }
+
+            const updatedProduct = await Product.update(id, name, description, price, category_id, saveImageUrl,stock); // Llamamos al modelo para actualizar el producto
             if (updatedProduct.affectedRows === 0) {
                 return res.status(404).json({ message: 'Producto no encontrado' }); // Si no se encuentra, respondemos con 404
             }
